@@ -1,0 +1,25 @@
+diff --git a/workspace/leaderboard/leaderboard/leaderboard_evaluator.py.old b/workspace/leaderboard/leaderboard/leaderboard_evaluator.py
+index d5ebf1b..80c35fb 100755
+--- a/workspace/leaderboard/leaderboard/leaderboard_evaluator.py.old
++++ b/workspace/leaderboard/leaderboard/leaderboard_evaluator.py
+@@ -168,7 +168,13 @@ class LeaderboardEvaluator(object):
+         Load a new CARLA world and provide data to CarlaDataProvider
+         """
+ 
+-        self.world = self.client.load_world(town)
++        self.world = self.client.get_world()
++        curr_map = self.world.get_map()
++        curr_map_name = curr_map.name.split("/")[-1]
++        if curr_map_name != town:
++            self.world = self.client.load_world(town)
++        else:
++            print("Skipping map loading as the server is already using the correct map")
+         settings = self.world.get_settings()
+         settings.fixed_delta_seconds = 1.0 / self.frame_rate
+         settings.synchronous_mode = True
+@@ -439,3 +445,5 @@ def main():
+ 
+ if __name__ == '__main__':
+     main()
++    # Kill all spawned threads
++    os._exit(0)
